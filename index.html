@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Management Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+  
+    /* Background Image */
+    body {
+      background-image: url('hogya.jpg'); /* Example hotel lobby image */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #fdfafa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background Overlay for better readability */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Darker overlay for better contrast */
+      z-index: -1;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #ffcc00; /* Bright yellow color */
+      margin-bottom: 20px;
+      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+    }
+    
+    .card-container {
+      display: flex;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: rgba(0, 0, 0, 0.8); /* Dark background with slight transparency */
+      border-radius: 10px;
+      padding: 30px;
+      width: 250px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.6);
+    }
+
+    .card h2 {
+      color: #ff9900; /* Orange color for card titles */
+    }
+
+    .card p {
+      color: #f1f1f1; /* Light gray text */
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.7);
+    }
+
+    .button {
+      background-color: #ff6600; /* Button color in bright orange */
+      color: #ffffff;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #ff8533; /* Slightly lighter orange for hover effect */
+    }
+
+    @media (max-width: 768px) {
+      .card-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .card {
+        width: 90%; /* Ensure cards are not too wide on small screens */
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Hotel Management</h1>
+
+  <div class="card-container">
+    <div class="card">
+      <h2>Manage Bookings</h2>
+      <p>View and edit hotel bookings</p>
+      <button class="button" onclick="redirectTo('manage-booking.html')">Manage</button>
+    </div>
+
+    <div class="card">
+      <h2>Manage Customers</h2>
+      <p>View and manage customer details</p>
+      <button class="button" onclick="redirectTo('manage-customers.html')">Manage</button>
+    </div>
+
+    <div class="card">
+      <h2>Exit</h2>
+      <p>Logout from the system</p>
+      <button class="button" onclick="redirectTo('exit.html')">Exit</button>
+    </div>
+  </div>
+
+  <script>
+    function redirectTo(page) {
+      window.location.href = page;
+    }
+  </script>
+
+</body>
+</html>

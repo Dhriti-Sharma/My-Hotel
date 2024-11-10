@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Bookings</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Set the background image for the entire page */
+    body {
+      background: url('food.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 40px;
+      backdrop-filter: brightness(0.8);
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #0066cc;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      color: #0059b3;
+      margin: 20px 0;
+    }
+
+    .button {
+      background-color: #0059b3;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .button:hover {
+      background-color: #004080;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin-top: 40px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #e6f0ff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .section input, .section button {
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 5px;
+      width: 100%;
+      font-size: 1.1rem;
+      border: 1px solid #b3c6ff;
+    }
+
+    .section input:focus {
+      border-color: #0059b3;
+      outline: none;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      color: #333;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #b3c6ff;
+    }
+
+    th {
+      background-color: #0066cc;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    td {
+      font-size: 1rem;
+      background-color: #f2f7ff;
+    }
+
+    tr:nth-child(even) {
+      background-color: #e6f0ff;
+    }
+
+    tr:hover {
+      background-color: #cce0ff;
+    }
+
+    #noResultsMessage {
+      color: #ff3333;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 20px;
+      display: none;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Manage Bookings</h1>
+
+  <div class="container">
+
+    <!-- Section: Add Booking -->
+    <div class="section">
+      <h2>Add New Booking</h2>
+      <input type="text" id="customerId" placeholder="Enter Customer ID">
+      <input type="text" id="roomNumber" placeholder="Enter Room Number">
+      <input type="date" id="checkInDate">
+      <input type="date" id="checkOutDate">
+      <button onclick="addBooking()" class="button">Add Booking</button>
+    </div>
+
+    <!-- Section: Search Booking -->
+    <div class="section">
+      <h2>Search for Booking by Room Number</h2>
+      <input type="text" id="bookingSearch" placeholder="Enter Room Number">
+      <button onclick="searchBooking()" class="button">Search</button>
+      <p id="noResultsMessage">No bookings found for the given room number.</p>
+    </div>
+
+    <!-- Section: Booking List -->
+    <div class="section">
+      <h2>Booking List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Customer ID</th>
+            <th>Room Number</th>
+            <th>Check-In Date</th>
+            <th>Check-Out Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bookingTable">
+          <!-- Dynamic Booking Rows will appear here -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <button class="button" onclick="window.location.href='index.html'">Back to Dashboard</button>
+
+  <script>
+    function addBooking() {
+      const customerId = document.getElementById('customerId').value;
+      const roomNumber = document.getElementById('roomNumber').value;
+      const checkInDate = document.getElementById('checkInDate').value;
+      const checkOutDate = document.getElementById('checkOutDate').value;
+
+      if (!customerId || !roomNumber || !checkInDate || !checkOutDate) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      const newBooking = {
+        customerId,
+        roomNumber,
+        checkInDate,
+        checkOutDate
+      };
+
+      let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+      bookings.push(newBooking);
+      localStorage.setItem('bookings', JSON.stringify(bookings));
+
+      // Clear input fields
+      document.getElementById('customerId').value = '';
+      document.getElementById('roomNumber').value = '';
+      document.getElementById('checkInDate').value = '';
+      document.getElementById('checkOutDate').value = '';
+
+      displayBookings(bookings);
+    }
+
+    function searchBooking() {
+      const searchQuery = document.getElementById('bookingSearch').value.toLowerCase();
+      const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+      const filteredBookings = bookings.filter(booking =>
+        booking.roomNumber.toLowerCase().includes(searchQuery)
+      );
+
+      if (filteredBookings.length === 0) {
+        document.getElementById('noResultsMessage').style.display = 'block';
+      } else {
+        document.getElementById('noResultsMessage').style.display = 'none';
+      }
+
+      displayBookings(filteredBookings);
+    }
+
+    function displayBookings(bookings) {
+      const bookingTable = document.getElementById('bookingTable');
+      bookingTable.innerHTML = '';
+
+      bookings.forEach((booking, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${booking.customerId}</td>
+          <td>${booking.roomNumber}</td>
+          <td>${booking.checkInDate}</td>
+          <td>${booking.checkOutDate}</td>
+          <td><button onclick="deleteBooking(${index})" class="button">Delete</button></td>
+        `;
+        bookingTable.appendChild(row);
+      });
+    }
+
+    function deleteBooking(index) {
+      let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+      bookings.splice(index, 1);
+      localStorage.setItem('bookings', JSON.stringify(bookings));
+      displayBookings(bookings);
+    }
+
+    window.onload = () => displayBookings(JSON.parse(localStorage.getItem('bookings')) || []);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Customers</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    
+    /* Background Image */
+    body {
+      background-image: url('custo.jpg'); /* New background image */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #ffffff; /* White text */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 { font-size: 2.5rem; color: #4a90e2; margin-bottom: 20px; } /* Blue title */
+    h2 { font-size: 1.8rem; color: #4a90e2; margin: 20px 0 10px; } /* Blue section headers */
+    p { font-size: 1.1rem; margin-bottom: 30px; color: #ffffff; }
+
+    .button {
+      background-color: #4a90e2; /* Blue button */
+      color: #ffffff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+    .button:hover { background-color: #72b0f1; } /* Lighter blue hover */
+
+    .container { width: 80%; max-width: 900px; }
+    .section {
+      background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+      color: #333; /* Dark text for readability */
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+    .section input, .section select, .section button {
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+      font-size: 1rem;
+    }
+    .section button {
+      background-color: #4a90e2;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .section button:hover { background-color: #72b0f1; }
+
+    table {
+      width: 100%;
+      margin-top: 10px;
+      border-collapse: collapse;
+      color: #333; /* Dark text for table content */
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #555;
+    }
+    th { color: #4a90e2; } /* Blue headers */
+  </style>
+</head>
+<body>
+
+  <h1>Manage Customers</h1>
+  <p>This page allows you to search and manage customer information.</p>
+
+  <div class="container">
+
+    <!-- Section: Add Customer -->
+    <div class="section">
+      <h2>Add New Customer</h2>
+      <input type="text" id="customerName" placeholder="Customer Name" required>
+      <input type="text" id="customerPhone" placeholder="Customer Phone" required>
+      <input type="email" id="customerEmail" placeholder="Customer Email" required>
+      <input type="number" id="customerAge" placeholder="Customer Age" required>
+      <input type="text" id="customerAddress" placeholder="Customer Address" required>
+      <input type="date" id="customerDOB" placeholder="Date of Birth" required>
+      <select id="customerMembership" required>
+        <option value="">Select Membership Status</option>
+        <option value="Regular">Regular</option>
+        <option value="Premium">Premium</option>
+      </select>
+      <button onclick="addCustomer()">Add Customer</button>
+    </div>
+
+    <!-- Section: Search Customer -->
+    <div class="section">
+      <h2>Search Customer</h2>
+      <input type="text" id="customerSearch" placeholder="Search by Customer Name">
+      <button onclick="searchCustomer()">Search</button>
+    </div>
+
+    <!-- Section: Customer List -->
+    <div class="section">
+      <h2>Customer List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Customer Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Address</th>
+            <th>Date of Birth</th>
+            <th>Membership</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="customerTable">
+          <!-- Dynamic Customer Rows will appear here -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <button class="button" onclick="window.location.href='index.html'">Back to Dashboard</button>
+
+  <script>
+    function addCustomer() {
+      const name = document.getElementById('customerName').value;
+      const phone = document.getElementById('customerPhone').value;
+      const email = document.getElementById('customerEmail').value;
+      const age = document.getElementById('customerAge').value;
+      const address = document.getElementById('customerAddress').value;
+      const dob = document.getElementById('customerDOB').value;
+      const membership = document.getElementById('customerMembership').value;
+
+      if (name && phone && email && age && address && dob && membership) {
+        const newCustomer = { name, phone, email, age, address, dob, membership };
+        let customers = JSON.parse(localStorage.getItem('customers')) || [];
+        customers.push(newCustomer);
+        localStorage.setItem('customers', JSON.stringify(customers));
+        document.getElementById('customerName').value = '';
+        document.getElementById('customerPhone').value = '';
+        document.getElementById('customerEmail').value = '';
+        document.getElementById('customerAge').value = '';
+        document.getElementById('customerAddress').value = '';
+        document.getElementById('customerDOB').value = '';
+        document.getElementById('customerMembership').value = '';
+        displayCustomers(customers);
+      } else {
+        alert("All fields are required.");
+      }
+    }
+
+    function searchCustomer() {
+      const searchQuery = document.getElementById('customerSearch').value.toLowerCase();
+      const customers = JSON.parse(localStorage.getItem('customers')) || [];
+      const filteredCustomers = customers.filter(customer =>
+        customer.name.toLowerCase().includes(searchQuery)
+      );
+      displayCustomers(filteredCustomers);
+    }
+
+    function displayCustomers(customers) {
+      const customerTable = document.getElementById('customerTable');
+      customerTable.innerHTML = '';
+      customers.forEach((customer, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${customer.name}</td>
+          <td>${customer.phone}</td>
+          <td>${customer.email}</td>
+          <td>${customer.age}</td>
+          <td>${customer.address}</td>
+          <td>${customer.dob}</td>
+          <td>${customer.membership}</td>
+          <td><button onclick="deleteCustomer(${index})" class="button">Delete</button></td>
+        `;
+        customerTable.appendChild(row);
+      });
+    }
+
+    function deleteCustomer(index) {
+      let customers = JSON.parse(localStorage.getItem('customers')) || [];
+      customers.splice(index, 1);
+      localStorage.setItem('customers', JSON.stringify(customers));
+      displayCustomers(customers);
+    }
+
+    window.onload = () => displayCustomers(JSON.parse(localStorage.getItem('customers')) || []);
+  </script>
+
+</body>
+</html>
